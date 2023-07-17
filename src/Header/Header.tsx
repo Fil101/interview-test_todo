@@ -6,7 +6,7 @@ import { Link, useLocation } from "react-router-dom";
 import "./Header.css";
 import { ModalCreateItem } from "../Modal/ModalCreateItem";
 
-export const Header = () => {
+export const Header: React.FC = () => {
   const { pathname } = useLocation(),
     isCategories = pathname.includes("categories"),
     [createModalActive, setCreateModalActive] = useState(false);

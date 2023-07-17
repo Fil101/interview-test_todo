@@ -5,15 +5,19 @@ import { v4 as uuidv4 } from "uuid";
 /* APPLICATION */
 import { RootState } from "../app/store";
 
-export interface CategoriesState {
+export interface Category {
   id: string;
   name: string;
   description: string;
 }
 
-const initialState: CategoriesState[] = [
+// добавил типы
+type CategoriesState = Category[];
+type NewCategory = Omit<Category, "id">;
+
+const initialState: CategoriesState = [
   {
-    id: "d485a644-5a24-4f55-b3f7-a083338be879",
+    id: "d485a644-5a24-4f55-b3f7-a083338be879", // заменить на enum
     name: "Категория",
     description: "Описание может быть длинным",
   },
@@ -33,13 +37,21 @@ export const categoriesSlice = createSlice({
   name: "categories",
   initialState,
   reducers: {
-    categoriesAdded: (state, action) => {
+    // переименовано в соответсвии с докой Redux и добавлена типизация
+    addCategory: (
+        state: CategoriesState,
+        action: PayloadAction<NewCategory>
+    ) => {
       state.push({
         id: uuidv4(),
         ...action.payload,
       });
     },
-    categoriesUpdated: (state, action) => {
+    // переименовано в соответсвии с докой Redux и добавлена типизация
+    updateCategory: (
+        state: CategoriesState,
+        action: PayloadAction<Category>
+    ) => {
       const { id, name, description } = action.payload,
         existingCategory = state.find((category) => category.id === id);
 
@@ -48,20 +60,21 @@ export const categoriesSlice = createSlice({
         existingCategory.description = description;
       }
     },
-    categoriesRemoved: (
-      state: CategoriesState[],
+    // переименовано в соответсвии с докой Redux и добавлена типизация
+    removeCategory: (
+      state: CategoriesState,
       action: PayloadAction<string>
     ) => {
-      let rm = (el: CategoriesState, i: number, arr: CategoriesState[]) =>
-          el.id === action.payload,
-        rmTaskIndex = state.findIndex(rm);
+      // удалил неиспользуемые параметры
+      const rm = (el: Category) => el.id === action.payload;
+      const rmTaskIndex = state.findIndex(rm);
 
       state.splice(rmTaskIndex, 1);
     },
   },
 });
 
-export const { categoriesAdded, categoriesUpdated, categoriesRemoved } =
+export const { addCategory, updateCategory, removeCategory } =
   categoriesSlice.actions;
 
 export const selectAllCategories = (state: RootState) => state.categories;

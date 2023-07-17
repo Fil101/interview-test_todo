@@ -5,14 +5,18 @@ import { v4 as uuidv4 } from "uuid";
 /* APPLICATION */
 import { RootState } from "../app/store";
 
-export interface CategoriesState {
+export interface Task {
   id: string;
   name: string;
   description: string;
   category: string;
 }
 
-const initialState: CategoriesState[] = [
+// добавил типы
+type TasksState = Task[];
+type NewTask = Omit<Task, "id">;
+
+const initialState: TasksState = [
   {
     id: "dcf6c7ea-56fe-4e36-960b-686ebf86d651",
     name: "Задача",
@@ -37,13 +41,21 @@ export const tasksSlice = createSlice({
   name: "tasks",
   initialState,
   reducers: {
-    tasksAdded: (state, action) => {
+    // переименовано в соответсвии с докой Redux и добавлена типизация
+    addTask: (
+        state: TasksState,
+        action: PayloadAction<NewTask>
+    ) => {
       state.push({
         id: uuidv4(),
         ...action.payload,
       });
     },
-    tasksUpdated: (state, action) => {
+    // переименовано в соответсвии с докой Redux и добавлена типизация
+    updateTask: (
+        state: TasksState,
+        action: PayloadAction<Task>
+    ) => {
       const { id, name, description, category } = action.payload,
         existingTask = state.find((task) => task.id === id);
 
@@ -53,26 +65,34 @@ export const tasksSlice = createSlice({
         existingTask.category = category;
       }
     },
-    tasksRemoved: (state, action) => {
-      let rm = (el: CategoriesState, i: number, arr: CategoriesState[]) =>
-          el.id === action.payload,
-        rmTaskIndex = state.findIndex(rm);
+    // переименовано в соответсвии с докой Redux и добавлена типизация
+    removeTask: (
+        state: TasksState,
+        action: PayloadAction<string>
+    ) => {
+      const rm = (el: Task) => el.id === action.payload;
+      const rmTaskIndex = state.findIndex(rm);
 
       state.splice(rmTaskIndex, 1);
     },
-    tasksClearedCategories: (state, action) => {
-      state.map((task) => {
-        if (task.category === action.payload) task.category = "";
+    // переименовано в соответсвии с докой Redux и добавлена типизация
+    clearTaskCategory: (
+        state: TasksState,
+        action: PayloadAction<string>
+    ) => {
+        // заменил map на forEach так как ничего не возвращаем
+       state.forEach((task) => {
+       if (task.category === action.payload) task.category = "";
       });
     },
   },
 });
 
 export const {
-  tasksAdded,
-  tasksUpdated,
-  tasksRemoved,
-  tasksClearedCategories,
+  addTask,
+  updateTask,
+  removeTask,
+  clearTaskCategory,
 } = tasksSlice.actions;
 
 export const selectAllTasks = (state: RootState) => state.tasks;

@@ -1,13 +1,15 @@
 /* VENDOR */
 import { useState } from "react";
-import { useSelector } from "react-redux";
 
 /* APPLICATION */
-import edit from "../icons/edit.svg";
+import React from "react";
+// import edit from "../icons/edit.svg";
 import remove from "../icons/remove.svg";
 import { selectAllCategories } from "../features/categoriesSlice";
 import { ModalEditItem } from "../Modal/ModalEditItem";
 import { ModalRemoveItem } from "../Modal/ModalRemoveItem";
+import {useAppSelector} from "../app/hooks";
+import {SvgSelector} from "../UI/SvgSelector";
 
 interface ListItemProps {
   item: {
@@ -19,9 +21,11 @@ interface ListItemProps {
 }
 
 export const ListItem: React.FC<ListItemProps> = ({ item }) => {
-  const categories = useSelector(selectAllCategories),
-    [editModalActive, setEditModalActive] = useState(false)
-  let [removeModalActive, setRemoveModalActive] = useState(false);
+  // заменил useSelector на useAppSelector
+  const categories = useAppSelector(selectAllCategories);
+
+  const [editModalActive, setEditModalActive] = useState(false); // разделение сущностей
+  const [removeModalActive, setRemoveModalActive] = useState(false); // замена let на const
 
   return (
     <>
@@ -32,8 +36,7 @@ export const ListItem: React.FC<ListItemProps> = ({ item }) => {
             {item.category && (
               <span className="list-item-col1-row1__category">
                 {
-                  categories.find((category) => category.id === item.category)
-                    ?.name
+                  categories.find((category) => category.id === item.category)?.name
                 }
               </span>
             )}
@@ -47,28 +50,35 @@ export const ListItem: React.FC<ListItemProps> = ({ item }) => {
               setEditModalActive(true);
             }}
           >
-            <img src={edit} alt="edit" />
+            {/*<img src={edit} alt="edit" />*/}
+            <SvgSelector id="edit" />
           </button>
           <button
             className="list-item-col2__btn"
             onClick={() => {
-              removeModalActive = true;
+              // removeModalActive = true; поправил не правильное использование стейта
+              setRemoveModalActive(true);
             }}
           >
             <img src={remove} alt="remove" />
           </button>
         </div>
-        <ModalEditItem
-          item={item}
-          active={editModalActive}
-          setActive={setEditModalActive}
-        />
-        <ModalRemoveItem
-          item={item}
-          active={removeModalActive}
-          setActive={setRemoveModalActive}
-        />
       </li>
+      {/*вынес модалки из элемента <li>, но нужно вообще переделать их архитекнуру, описал в ReadMe*/}
+      {editModalActive &&
+          <ModalEditItem
+              item={item}
+              active={editModalActive}
+              setActive={setEditModalActive}
+          />
+      }
+      {removeModalActive &&
+          <ModalRemoveItem
+              item={item}
+              active={removeModalActive}
+              setActive={setRemoveModalActive}
+          />
+      }
     </>
   );
 };

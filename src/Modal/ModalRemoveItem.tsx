@@ -1,5 +1,4 @@
 /* VENDOR */
-import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 
 /* APPLICATION */
@@ -7,8 +6,9 @@ import { Modal } from "./Modal";
 import { ModalHeader } from "./ModalHeader";
 import { ModalText } from "./ModalText";
 import { ModalFooter } from "./ModalFooter";
-import { tasksRemoved, tasksClearedCategories } from "../features/tasksSlice";
-import { categoriesRemoved } from "../features/categoriesSlice";
+import { removeTask, clearTaskCategory } from "../features/tasksSlice";
+import { removeCategory } from "../features/categoriesSlice";
+import { useAppDispatch } from "../app/hooks";
 
 interface ModalRemoveItemProps {
   item: {
@@ -26,7 +26,7 @@ export const ModalRemoveItem: React.FC<ModalRemoveItemProps> = ({
   active,
   setActive,
 }) => {
-  const dispatch = useDispatch(),
+  const dispatch = useAppDispatch(), // заменил useDispatch на useAppDispatch
     { pathname } = useLocation(),
     isCategories = pathname.includes("categories"),
     text = `Вы уверены, что хотите удалить задачу "${item.name}"?`;
@@ -41,10 +41,10 @@ export const ModalRemoveItem: React.FC<ModalRemoveItemProps> = ({
         onSubmit={
           isCategories
             ? () => {
-                dispatch(categoriesRemoved(item.id));
-                dispatch(tasksClearedCategories(item.id));
+                dispatch(removeCategory(item.id));
+                dispatch(clearTaskCategory(item.id));
               }
-            : () => dispatch(tasksRemoved(item.id))
+            : () => dispatch(removeTask(item.id))
         }
       />
     </Modal>

@@ -13,6 +13,7 @@ export const ModalBtn: React.FC<ModalBtnProps> = ({
   size,
   onClick,
 }) => {
+  // не очень читаемые тернанки, лучше бы перписать
   const btnClass =
     type === "primary"
       ? size === "large"

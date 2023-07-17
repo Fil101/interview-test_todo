@@ -1,6 +1,5 @@
 /* VENDOR */
 import { useState } from "react";
-import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 
 /* APPLICATION */
@@ -10,8 +9,9 @@ import { ModalRow } from "./ModalRow";
 import { ModalInput } from "./ModalInput";
 import { ModalTextarea } from "./ModalTextarea";
 import { ModalFooter } from "./ModalFooter";
-import { tasksUpdated } from "../features/tasksSlice";
-import { categoriesUpdated } from "../features/categoriesSlice";
+import { updateTask } from "../features/tasksSlice";
+import { updateCategory } from "../features/categoriesSlice";
+import { useAppDispatch } from "../app/hooks";
 
 interface ModalEditItemProps {
   item: {
@@ -29,7 +29,7 @@ export const ModalEditItem: React.FC<ModalEditItemProps> = ({
   active,
   setActive,
 }) => {
-  const dispatch = useDispatch(),
+  const dispatch = useAppDispatch(), // заменил useDispatch на useAppDispatch
     { pathname } = useLocation(),
     isCategories = pathname.includes("categories"),
     [name, setName] = useState(item.name),
@@ -65,8 +65,8 @@ export const ModalEditItem: React.FC<ModalEditItemProps> = ({
         onSubmit={() => {
           dispatch(
             isCategories
-              ? categoriesUpdated({ id: item.id, name, description })
-              : tasksUpdated({
+              ? updateCategory({ id: item.id, name, description })
+              : updateTask({
                   id: item.id,
                   name,
                   description,
