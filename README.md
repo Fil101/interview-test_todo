@@ -1,46 +1,38 @@
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) TS template.
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+# Комментарии к тестовому
+## Могу предложить следующие правки/улучшения:
+<ul>
+  <li>Сделать папки Components и UI (компонент для общих компонентов, которые имеют какую-то логику, UI для “тупых” компонентов, которые     
+используются только в некоторых местах)</li>
+  <li>Отрефачить LitstItem - удалить состояния отвечающие за открытие модалок и  передавать два колбэка, отвечающих за открытие модалок. Вынести tasks и categories и так же передавать их пропсом в ListItem. Перенести ListItem в папку UI</li>
+  <li>Перенести ListItem в папку UI</li>
+  <li>Перенести Header в Components</li>
+  <li>Перенести отрисовку модалок в компонент верхенего уровня (например App) и рисовать их через React.createPortal</li>
+  <li>Можно придумать какой-то механизм, например хук, который под капотом будет использовать useContext (как вариант можно и в Redux, но всё-таки в Redux лучше хранить бизнес логику, а тут чисто логика отображения. В общем стоит подумать.), который позволит из любого места приложения открывать модалки (для того чтобы не хранить логику в каждом ListItem и для унификации работы с модалками)</li>
+  <li>Данных хук юзать в Categories и Tasks и из него доставать два колбэка для управления модалками и их передавать в пропсами в ListItem;</li>
+  <li>Папку Modal переименовать в Modals, на верхнем уровне оставить только ModalRemoveItem и ModalCreateItem, остальные модалки вынести в папку components</li>
+  <li>Компонент Modal вынести в UI, т.к. компонент не умный.</li>
+  <li>app переименовать в store, reduxStore, чтобы было понятнее</li>
+  <li>в папке features создать две подпапки categories (categoriesSlice.ts, categories.tsx) и tasks (tasksSlice.ts, tasks.tsx) для соответсвия с FSD, чтобы каждая папка содержала всё необходимое для данной фичи.</li>
+  <li>Накидал схему с идеями по архитектуре:<br>
+	  <a href="https://ibb.co/xmHMJmW"><img src="https://i.ibb.co/CJ2nhJg/2023-07-17-14-14-57.png" alt="2023-07-17-14-14-57" border="0"></a><br />
+  </li>	
+  <li> Так же можно в папку Categories добавить файл types.ts и из него экспортировать enum (для дефолтных категории), который будет использоваться в тасках, чтобы иметь единственный источник правды для статичных id. Такое разрешается в модульной архитектуре, но  не уверен, на счет FSD 😢 <br>
+  <p>enum CategoriesIds { <br>
+	&nbsp;&nbsp;CATEGORY_1 = "d485a644-5a24-4f55-b3f7-a083338be879"<br>
+	&nbsp;&nbsp;CATEGORY_2 = "52f7451a-0f06-4ddc-affa-b1d8ed24aee3"<br>
+	&nbsp;&nbsp;CATEGORY_2 = "36704c57-4575-4112-b962-948b04a20506"<br>
+}</p>
+  </li>
+  <li>Обернуть все  составные компоненты модалок CreateItem и RemoveItem в React.memo()</li>
+  <li>Все функции внутри CreateItem и RemoveItem, которые передаются пропсами обернуть в useCallback</li>
+  <li>Поменять использование svg с помощью тега img, так как можем столкнуться с некоторыми проблемами, например с использованием hover и сменой цвета svg.</li>
+  <li>Добавить ограничение на кол-во симоволов в описании задании и категории и добавить кнопку вроде "читать далее" или полосу прокрутки, чтобы не отрисовывать большой объем текста сразу</li>
+</ul>
+<h3>Так же добавил небольшие правки в код (в код добавил комментарии к изменениям):</h3>
+<ul>
+	<li>Внес изменения в CSS, чтобы описание категории и таски, не сдвигало кнопки </li>
+ 	<li>Все useDispatch и useSelector заменил на useAppDispatch и useAppSelector</li>
+	<li>Поменял нейминг редьюсеров и поправил их типизацию</li>
+	<li>Поправил некоторые баги связанные с удалением категорий и тасок. И прикрепление категории при создании таски</li>
+	<li>Так же внес еще несколько мелких правок, связанных с неймингом, неиспользуемым кодом и код стайл</li>
+</ul>
